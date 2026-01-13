@@ -476,6 +476,16 @@ export default function DownloadsScreen() {
     addUrlMutation.mutate(newDownload);
   };
 
+  const handleCancelDownload = () => {
+    setShowAddModal(false);
+    setNewDownload({
+      imageUrl: '',
+      downloadUrl: '',
+      title: '',
+      description: '',  
+    });
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <View style={[styles.centerWrapper, { maxWidth: contentMaxWidth }]}>
@@ -669,7 +679,7 @@ export default function DownloadsScreen() {
               <View style={styles.modalFooter}>
                 <TouchableOpacity
                   style={[styles.modalButton, styles.cancelButton, { backgroundColor: colors.background }]}
-                  onPress={() => setShowAddModal(false)}
+                  onPress={handleCancelDownload}
                 >
                   <Text style={[styles.buttonText, { color: colors.text }]}>Cancel</Text>
                 </TouchableOpacity>
