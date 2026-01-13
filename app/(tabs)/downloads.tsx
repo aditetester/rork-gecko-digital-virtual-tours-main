@@ -665,25 +665,25 @@ export default function DownloadsScreen() {
                 multiline
                 numberOfLines={4}
               />
+            
+              <View style={styles.modalFooter}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton, { backgroundColor: colors.background }]}
+                  onPress={() => setShowAddModal(false)}
+                >
+                  <Text style={[styles.buttonText, { color: colors.text }]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.addButtonModal, { backgroundColor: colors.accent }]}
+                  onPress={handleAddDownload}
+                  disabled={addUrlMutation.isPending}
+                >
+                  <Text style={styles.buttonText}>
+                    {addUrlMutation.isPending ? 'Adding...' : 'Add'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </ScrollView>
-
-            <View style={styles.modalFooter}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton, { backgroundColor: colors.background }]}
-                onPress={() => setShowAddModal(false)}
-              >
-                <Text style={[styles.buttonText, { color: colors.text }]}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.addButtonModal, { backgroundColor: colors.accent }]}
-                onPress={handleAddDownload}
-                disabled={addUrlMutation.isPending}
-              >
-                <Text style={styles.buttonText}>
-                  {addUrlMutation.isPending ? 'Adding...' : 'Add'}
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </Modal>
@@ -907,7 +907,8 @@ const getStyles = (colors: ThemeColors, isTablet: boolean) => StyleSheet.create(
     color: colors.text,
   },
   modalBody: {
-    padding: GeckoTheme.spacing.lg,
+    paddingLeft: GeckoTheme.spacing.lg,
+    paddingRight: GeckoTheme.spacing.lg,
   },
   label: {
     fontSize: 14,
@@ -935,6 +936,7 @@ const getStyles = (colors: ThemeColors, isTablet: boolean) => StyleSheet.create(
   textArea: {
     height: 100,
     textAlignVertical: 'top',
+    marginBottom: GeckoTheme.spacing.md,
   },
   helperText: {
     fontSize: 12,
@@ -944,7 +946,7 @@ const getStyles = (colors: ThemeColors, isTablet: boolean) => StyleSheet.create(
   },
   modalFooter: {
     flexDirection: 'row',
-    padding: GeckoTheme.spacing.lg,
+    padding: GeckoTheme.spacing.md,
     gap: GeckoTheme.spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.border,
