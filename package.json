@@ -3,9 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx rork start -p 3d4pg1z1g3lb5do20fw71 --tunnel",
-    "start-web": "npx rork start -p 3d4pg1z1g3lb5do20fw71 --web --tunnel",
-    "start-web-dev": "DEBUG=expo* npx rork start -p 3d4pg1z1g3lb5do20fw71 --web --tunnel",
+    "start": "node init && npx rork start -p 3d4pg1z1g3lb5do20fw71 --tunnel",
+    "start-web": "node init && npx rork start -p 3d4pg1z1g3lb5do20fw71 --web --tunnel",
+    "start-web-dev": "node init && DEBUG=expo* npx rork start -p 3d4pg1z1g3lb5do20fw71 --web --tunnel",
     "lint": "expo lint"
   },
   "dependencies": {

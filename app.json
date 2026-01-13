@@ -3,6 +3,7 @@
     "name": "Gecko Digital Virtual Tours",
     "slug": "gecko-digital-virtual-tours",
     "version": "1.0.0",
+    "output": "server",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "rork-app",

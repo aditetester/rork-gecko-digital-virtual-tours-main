@@ -99,23 +99,66 @@ type SocialActionsProps = {
 };
 
 function SocialActions({ postId, virtualTourUrl, onCommentPress, colors, spacing }: SocialActionsProps) {
+  const [localIsLiked, setLocalIsLiked] = useState<boolean | null>(null);
+  const utils = trpc.useUtils();
   const interactionsQuery = trpc.social.getInteractions.useQuery({ postId });
-  const likeMutation = trpc.social.likePost.useMutation({
-    onSuccess: () => {
-      interactionsQuery.refetch();
-    },
-  });
-  const unlikeMutation = trpc.social.unlikePost.useMutation({
-    onSuccess: () => {
-      interactionsQuery.refetch();
-    },
-  });
-
-  const isLiked = interactionsQuery.data?.isLiked || false;
+  
+  const isLiked = localIsLiked !== null ? localIsLiked : (interactionsQuery.data?.isLiked || false);
   const likeCount = interactionsQuery.data?.likeCount || 0;
   const commentCount = interactionsQuery.data?.commentCount || 0;
 
+  const likeMutation = trpc.social.likePost.useMutation({
+    onMutate: async () => {
+      await utils.social.getInteractions.cancel({ postId });
+      const previousInteractions = utils.social.getInteractions.getData({ postId });
+      
+      utils.social.getInteractions.setData({ postId }, (old: any) => ({
+        ...old,
+        isLiked: true,
+        likeCount: (old?.likeCount ?? 0) + 1,
+      }));
+
+      return { previousInteractions };
+    },
+    onError: (err, newLike, context) => {
+      if (context?.previousInteractions) {
+        utils.social.getInteractions.setData({ postId }, context.previousInteractions);
+        setLocalIsLiked(context.previousInteractions.isLiked);
+      }
+    },
+    onSettled: () => {
+      utils.social.getInteractions.invalidate({ postId });
+    },
+  });
+
+  const unlikeMutation = trpc.social.unlikePost.useMutation({
+    onMutate: async () => {
+      await utils.social.getInteractions.cancel({ postId });
+      const previousInteractions = utils.social.getInteractions.getData({ postId });
+
+      utils.social.getInteractions.setData({ postId }, (old: any) => ({
+        ...old,
+        isLiked: false,
+        likeCount: Math.max(0, (old?.likeCount ?? 0) - 1),
+      }));
+
+      return { previousInteractions };
+    },
+    onError: (err, newUnlike, context) => {
+      if (context?.previousInteractions) {
+        utils.social.getInteractions.setData({ postId }, context.previousInteractions);
+        setLocalIsLiked(context.previousInteractions.isLiked);
+      }
+    },
+    onSettled: () => {
+      utils.social.getInteractions.invalidate({ postId });
+    },
+  });
+
   const handleLike = () => {
+    const nextState = !isLiked;
+    setLocalIsLiked(nextState);
+    
     if (isLiked) {
       unlikeMutation.mutate({ postId });
     } else {
@@ -166,7 +209,7 @@ function SocialActions({ postId, virtualTourUrl, onCommentPress, colors, spacing
           fill={isLiked ? '#ff4444' : 'none'}
         />
         {likeCount > 0 && (
-          <Text style={[socialStyles.actionText, { color: colors.textSecondary }]}>
+          <Text style={[socialStyles.actionText, { color: isLiked ? '#ff4444' : colors.textSecondary }]}>
             {likeCount}
           </Text>
         )}
